@@ -18,11 +18,11 @@
             IsLeft = false;
         }
 
-        internal Either(TResult result, TError error)
+        internal Either(TResult result, TError error, bool isLeft = false)
         {
             Error = error;
             Result = result;
-            IsLeft = false;
+            IsLeft = isLeft;
         }
 
         public static implicit operator Either<TResult, TError>((TResult result, TError error) tuple) => new Either<TResult, TError>(tuple.result, tuple.error);

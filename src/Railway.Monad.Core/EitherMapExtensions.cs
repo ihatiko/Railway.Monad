@@ -5,10 +5,16 @@ namespace Railway.Monad.Core
 {
     public static class EitherMapExtensions
     {
-        public static Either<TNewResult, TError> Map<TNewResult, TResult, TError>(this Either<TResult, TError> either, Func<TResult, TNewResult> projection)
+        public static Either<TNewResult, TError> MapRight<TNewResult, TResult, TError>(this Either<TResult, TError> either, Func<TResult, TNewResult> resultProjection)
         {
-            var result = projection(either.Result);
+            var result = resultProjection(either.Result);
             return new Either<TNewResult, TError>(result, either.Error);
+        }
+
+        public static Either<TResult, TNewError> MapLeft<TNewError, TResult, TError>(this Either<TResult, TError> either, Func<TError, TNewError> errorProjection)
+        {
+            var error = errorProjection(either.Error);
+            return new Either<TResult, TNewError>(either.Result, error);
         }
 
         public static Either<TNewResult, TNewError> Map<TNewResult, TNewError, TResult, TError>(this Either<TResult, TError> either,
@@ -16,12 +22,7 @@ namespace Railway.Monad.Core
         {
             var result = resultProjection(either.Result);
             var error = errorProjection(either.Error);
-            return new Either<TNewResult, TNewError>(result, error);
-        }
-
-        public static TNewResult Match<TNewResult, TResult, TError>(this Either<TResult, TError> either, Func<TResult, TNewResult> newResultProjection, Func<TError, TNewResult> newErrorProjection)
-        {
-            return either.IsLeft ? newResultProjection(either.Result) : newErrorProjection(either.Error);
+            return new Either<TNewResult, TNewError>(result, error, either.IsLeft);
         }
     }
 }
